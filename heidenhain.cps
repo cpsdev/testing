@@ -9,9 +9,6 @@
   
   FORKID {36E63822-3A79-42b9-96EA-6B661FE8D0C8}
 */
-//test
-//another test
-//
 description = "Heidenhain";
 vendor = "Heidenhain";
 vendorUrl = "http://www.heidenhain.com";
