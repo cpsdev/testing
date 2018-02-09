@@ -221,7 +221,7 @@ function printData(text) {
 }
 
 function onOpen() {
-
+writeln("AABB");
   if (properties.machineDefinition) {
     machineConfiguration = MachineConfiguration.createFromPath(findFile(properties.machineDefinition));
     log("");
