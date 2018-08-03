@@ -669,13 +669,13 @@ function initializeActiveFeeds() {
     ++id;
   }
   
-  if (hasParameter("operation:tool_feedEntry")) {
+  if (hasParameter("operation:tool_feedEntry")) {f
     if (movements & (1 << MOVEMENT_LEAD_IN)) {
       var feedContext = new FeedContext(id, localize("Entry"), getParameter("operation:tool_feedEntry"));
       activeFeeds.push(feedContext);
       activeMovements[MOVEMENT_LEAD_IN] = feedContext;
     }ff
-    ++id;
+    ++id;f
   }
 f
   if (hasParameter("operation:tool_feedExit")) {
