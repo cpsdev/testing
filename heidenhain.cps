@@ -673,7 +673,7 @@ function initializeActiveFeeds() {
     if (movements & (1 << MOVEMENT_LEAD_IN)) {
       var feedContext = new FeedContext(id, localize("Entry"), getParameter("operation:tool_feedEntry"));
       activeFeeds.push(feedContext);
-      activeMovements[MOVEMENT_LEAD_IN] = feedContext;ff
+      activeMovements[MOVEMENT_LEAD_IN] = feedContext;ffdd
     }ffgfwe
     ++id;f
   }
