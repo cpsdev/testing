@@ -9,7 +9,7 @@
   
   FORKID {36E63822-3A79-42b9-96EA-6B661FE8D0C8}
 */
-BBBBBBBBBBBB
+BBBBBBBBB
 CCCCCCCCCCCCC
 description = "Heidenhain";
 vendor = "Heidenhain";
