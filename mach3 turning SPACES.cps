@@ -15,7 +15,7 @@ vendor = "Artsoft";
 vendorUrl = "http://www.machsupport.com";
 legal = "Copyright (C) 2012-2018 by Autodesk, Inc.";
 certificationLevel = 2;
-minimumRevision = 40783;
+minimumRevision = 40783;esfw
 
 longDescription = "Generic turning post for Mach3. Use Turret 0 for Positional Turret, Turret 101 for QCTP on X- Post, Turret 102 for QCTP on X+ Post, Turret 103 for Gang Tooling on X- Post, Turret 104 for Gang Tooling on X+ Tool Post.";
 

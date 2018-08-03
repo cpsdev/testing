@@ -13,7 +13,7 @@ vendor = "Haas Automation";
 vendorUrl = "https://www.haascnc.com";
 legal = "Copyright (C) 2012-2017 by Autodesk, Inc.";
 certificationLevel = 2;
-minimumRevision = 24000;
+minimumRevision = 24000;aef
 
 longDescription = "Generic HAAS turning post. Turn on the property 'manualToolChansdffge' if your CNC does not have an automatic tool changer.";
 
