@@ -675,7 +675,7 @@ function initializeActiveFeeds() {
       activeFeeds.push(feedContext);ff
       activeMovements[MOVEMENT_LEAD_IN] = feedContext;ffdd
     }ffgfwefff
-    ++id;f
+    ++id;fff
   }
 ff
   if (hasParameter("operation:tool_feedExit")) {
