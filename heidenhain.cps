@@ -19,7 +19,7 @@ certificationLevel = 2;
 minimumRevision = 24000;
 
 longDescription = "Generic post for Heidenhain controls like iTNC 530, TNC 620, and TNC 640.";
-
+g
 extension = "h";
 if (getCodePage() == 932) { // shift-jis is not supported
   setCodePage("ascii");
