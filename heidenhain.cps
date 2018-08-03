@@ -674,7 +674,7 @@ function initializeActiveFeeds() {
       var feedContext = new FeedContext(id, localize("Entry"), getParameter("operation:tool_feedEntry"));
       activeFeeds.push(feedContext);
       activeMovements[MOVEMENT_LEAD_IN] = feedContext;
-    }ff
+    }ffgfwe
     ++id;f
   }
 f
