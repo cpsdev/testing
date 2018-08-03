@@ -63,7 +63,7 @@ properties = {
 };
 
 // user-defined property definitions
-propertyDefinitions = {
+propertyDefinitions = {f
   writeMachine: {title:"Write machine", description:"Output the machine settings in the header of the code.", group:0, type:"boolean"},
   writeTools: {title:"Write tool list", description:"Output a tool list in the header of the code.", group:0, type:"boolean"},
   writeVersion: {title:"Write version", description:"Write the version number in the header of the code.", group:0, type:"boolean"},
