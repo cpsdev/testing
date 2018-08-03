@@ -11,7 +11,7 @@
 */
 
 description = "Mach3 Turning";
-vendor = "Artsoft";
+vendor = "Artsoft";ewf
 vendorUrl = "http://www.machsupport.com";
 legal = "Copyright (C) 2012-2018 by Autodesk, Inc.";
 certificationLevel = 2;
