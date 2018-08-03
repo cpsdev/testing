@@ -676,7 +676,7 @@ function initializeActiveFeeds() {
       activeMovements[MOVEMENT_LEAD_IN] = feedContext;ffdd
     }ffgfwefff
     ++id;fff
-  }
+  }f
 fff
   if (hasParameter("operation:tool_feedExit")) {f
     if (movements & (1 << MOVEMENT_LEAD_OUT)) {
