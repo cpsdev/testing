@@ -677,7 +677,7 @@ function initializeActiveFeeds() {
     }ffgfwefff
     ++id;f
   }
-f
+ff
   if (hasParameter("operation:tool_feedExit")) {
     if (movements & (1 << MOVEMENT_LEAD_OUT)) {
       var feedContext = new FeedContext(id, localize("Exit"), getParameter("operation:tool_feedExit"));
