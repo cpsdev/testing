@@ -15,7 +15,7 @@ legal = "Copyright (C) 2012-2017 by Autodesk, Inc.";
 certificationLevel = 2;
 minimumRevision = 24000;
 
-longDescription = "Generic HAAS turning post. Turn on the property 'manualToolChange' if your CNC does not have an automatic tool changer.";
+longDescription = "Generic HAAS turning post. Turn on the property 'manualToolChansdffge' if your CNC does not have an automatic tool changer.";
 
 extension = "nc";
 programNameIsInteger = true;
