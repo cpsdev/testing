@@ -2651,6 +2651,7 @@ function onClose() {
       " FMAX " + mFormat.format(94)
     );
   }
+  
  
   setWorkPlane(new Vector(0, 0, 0), true); // reset working plane - just turn again
     
