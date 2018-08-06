@@ -2650,13 +2650,13 @@ function onClose() {
       conditional(machineConfiguration.isMachineCoordinate(2), " C" + abcFormat.format(0)) +
       " FMAX " + mFormat.format(94)
     );
-  }     
+  }
  
   setWorkPlane(new Vector(0, 0, 0), true); // reset working plane - just turn again
-  
+    
   if (forceMultiAxisIndexing || !is3D() || machineConfiguration.isMultiAxisConfiguration()) {
     writeBlock(mFormat.format(127)); // cancel shortest path traverse
-  }
+  } 
 
   onCommand(COMMAND_STOP_CHIP_TRANSPORT);
   writeBlock(mFormat.format(30)); // stop program, spindle stop, coolant off
