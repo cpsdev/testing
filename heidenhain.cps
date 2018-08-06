@@ -2656,7 +2656,7 @@ function onClose() {
     
   if (forceMultiAxisIndexing || !is3D() || machineConfiguration.isMultiAxisConfiguration()) {
     writeBlock(mFormat.format(127)); // cancel shortest path traverse
-  } 
+  }
 
   onCommand(COMMAND_STOP_CHIP_TRANSPORT);
   writeBlock(mFormat.format(30)); // stop program, spindle stop, coolant off
