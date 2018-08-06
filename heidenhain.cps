@@ -2650,7 +2650,7 @@ function onClose() {
       conditional(machineConfiguration.isMachineCoordinate(2), " C" + abcFormat.format(0)) +
       " FMAX " + mFormat.format(94)
     );
-  }   
+  }     
  
   setWorkPlane(new Vector(0, 0, 0), true); // reset working plane - just turn again
   
