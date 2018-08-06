@@ -1,25 +1,24 @@
 /**
-  Copyright (C) 2012-2017 by Autodesk, Inc.
+  Copyright (C) 2012-2018 by Autodesk, Inc.
   All rights reserved.
 
   Heidenhain post processor configuration.
 
-  $Revision$f
+  $Revision$
   $Date$
-  tr
-  FORKID {36E63822-3A79-42b9-96EA-6B661FE8D0C8}r
-*/r
-BBBBBBBBBggrt
-CCCCCCCCCCCCCrrdrt
+  
+  FORKID {36E63822-3A79-42b9-96EA-6B661FE8D0C8}
+*/
+
 description = "Heidenhain";
 vendor = "Heidenhain";
 vendorUrl = "http://www.heidenhain.com";
-legal = "Copyright (C) 2012-2017 by Autodesk, Inc.";
+legal = "Copyright (C) 2012-2018 by Autodesk, Inc.";
 certificationLevel = 2;
-minimumRevision = 24000;
+minimumRevision = 40783;
 
 longDescription = "Generic post for Heidenhain controls like iTNC 530, TNC 620, and TNC 640.";
-g
+
 extension = "h";
 if (getCodePage() == 932) { // shift-jis is not supported
   setCodePage("ascii");
@@ -30,7 +29,7 @@ if (getCodePage() == 932) { // shift-jis is not supported
 capabilities = CAPABILITY_MILLING;
 tolerance = spatial(0.002, MM);
 
-minimumChordLength = spatial(0.01, MM);
+minimumChordLength = spatial(0.25, MM);
 minimumCircularRadius = spatial(0.01, MM);
 maximumCircularRadius = spatial(1000, MM);
 minimumCircularSweep = toRad(0.01);
@@ -53,17 +52,18 @@ properties = {
   optionalStop: true, // optional stop
   structureComments: true, // show structure comments
   useM92: false, // use M92 instead of M91
+  useM140: true, // Specifies to use M140 MB MAX for Z-axis retracts instead of M91/M92 positions
   useSubroutines: false, // specifies that subroutines per each operation should be generated
   useSubroutinePatterns: false, // generates subroutines for patterned operation
   useSubroutineCycles: false, // generates subroutines for cycle operations on same holes
   machineDefinition: "", // specifies the path of the machine definition
   useParametricFeed: false, // specifies that feed should be output using Q values
   showNotes: false, // specifies that operation notes should be output.
-  preferTilt: -1 // -1: negative, 0:dont care, 1: positive
+  preferTilt: "-1" // -1: negative, 0:dont care, 1: positive
 };
 
 // user-defined property definitions
-propertyDefinitions = {f
+propertyDefinitions = {
   writeMachine: {title:"Write machine", description:"Output the machine settings in the header of the code.", group:0, type:"boolean"},
   writeTools: {title:"Write tool list", description:"Output a tool list in the header of the code.", group:0, type:"boolean"},
   writeVersion: {title:"Write version", description:"Write the version number in the header of the code.", group:0, type:"boolean"},
@@ -73,18 +73,32 @@ propertyDefinitions = {f
   expandCycles: {title:"Expand cycles", description:"If enabled, unhandled cycles are expanded.", type:"boolean"},
   smoothingTolerance: {title:"Smoothing tolerance", description:"Smoothing tolerance (-1 for disabled).", type:"number"},
   optionalStop: {title:"Optional stop", description:"Outputs optional stop code during when necessary in the code.", type:"boolean"},
-  structureComments: {title:"Structure comments", description:"Shows structure comments", type:"boolean"},
+  structureComments: {title:"Structure comments", description:"Shows structure comments.", type:"boolean"},
   useM92: {title:"Use M92", description:"If enabled, M91 is used instead of M91.", type:"boolean"},
+  useM140: {title:"Use M140", description:"Specifies to use M140 MB MAX for Z-axis retracts instead of M91/M92 positions.", type:"boolean"},
   useSubroutines: {title:"Use subroutines", description:"Specifies that subroutines per each operation should be generated.", type:"boolean"},
   useSubroutinePatterns: {title:"Use subroutine patterns", description:"Generates subroutines for patterned operation.", type:"boolean"},
   useSubroutineCycles: {title:"Use subroutine cycles", description:"Generates subroutines for cycle operations on same holes.", type:"boolean"},
   machineDefinition: {title:"Machine definition", description:"Specifies the file path of the machine definition to use.", type:"file", filters:"*.machine|Machine Configuration"},
   useParametricFeed:  {title:"Parametric feed", description:"Specifies the feed value that should be output using a Q value.", type:"boolean"},
   showNotes: {title:"Show notes", description:"Writes operation notes as comments in the outputted code.", type:"boolean"},
-  preferTilt: {title:"Prefer tilt", description:"Specifies which tilt direction is preferred", type:"integer", values:[{id:-1, title:"Negative"}, {id:0, title:"Either"}, {id:1, title:"Positive"}]}
+  preferTilt: {title:"Prefer tilt", description:"Specifies which tilt direction is preferred.", type:"enum", values:[{id:"-1", title:"Negative"}, {id:"0", title:"Either"}, {id:"1", title:"Positive"}]}
 };
 
-
+// samples:
+// throughTool: {on: 88, off: 89}
+// throughTool: {on: [8, 88], off: [9, 89]}
+var coolants = {
+  flood: {on: 8, off: 9},
+  mist: {on: 25, off: 9},
+  throughTool: {on:7, off:9},
+  air: {},
+  airThroughTool: {},
+  suction: {},
+  floodMist: {},
+  floodThroughTool: {},
+  off: 9
+};
 
 // fixed settings
 var closestABC = false; // choose closest machine angles
@@ -223,7 +237,8 @@ function printData(text) {
 }
 
 function onOpen() {
-writeln("AABB");
+
+  properties.preferTilt = parseInt(properties.preferTilt, 10);
   if (properties.machineDefinition) {
     machineConfiguration = MachineConfiguration.createFromPath(findFile(properties.machineDefinition));
     log("");
@@ -233,7 +248,7 @@ writeln("AABB");
     optimizeMachineAngles2(0); // using M128 mode
   } else if (false) {
     // NOTE: setup your machine here
-    var aAxis = createAxis({coordinate:0, table:true, axis:[1, 0, 0], range:[-120.0001, 120.0001], preference:1});
+    var aAxis = createAxis({coordinate:0, table:true, axis:[1, 0, 0], range:[-120.0001, 120.0001], preference: properties.preferTilt});
     //var bAxis = createAxis({coordinate:1, table:true, axis:[0, 1, 0], range:[-120.0001, 120.0001], preference:1});
     var cAxis = createAxis({coordinate:2, table:true, axis:[0, 0, 1], range:[0, 360], cyclic:true});
     machineConfiguration = new MachineConfiguration(aAxis, cAxis);
@@ -398,9 +413,9 @@ function setTolerance(tolerance) {
 
   if (tolerance > 0) {
     writeBlock("CYCL DEF 32.0 " + localize("TOLERANCE"));
-    writeBlock("CYCL DEF 32.1 T" + xyzFormat.format(tolerance));
+    writeBlock("CYCL DEF 32.1 T" + xyzFormat.format(tolerance * 1.3));
     if (machineConfiguration.isMultiAxisConfiguration()) {
-      writeBlock("CYCL DEF 32.2 HSC-MODE:0 TA0.05"); // required for 5-axis support
+      writeBlock("CYCL DEF 32.2 HSC-MODE:0 TA0.5"); // required for 5-axis support
     }
   } else {
     writeBlock("CYCL DEF 32.0 " + localize("TOLERANCE")); // cancel tolerance
@@ -463,7 +478,7 @@ function defineWorkPlane(_section, _setWorkPlane) {
         setRotation(remaining);
       } else {
         if (machineConfiguration.isMultiAxisConfiguration()) {
-          abc = getWorkPlaneMachineABC(_section.workPlane);
+          abc = getWorkPlaneMachineABC(_section.workPlane, _setWorkPlane);
         } else {
           var eulerXYZ = _section.workPlane.getTransposed().eulerZYX_R;
           abc = new Vector(-eulerXYZ.x, -eulerXYZ.y, -eulerXYZ.z);
@@ -553,7 +568,7 @@ function setWorkPlane(abc, turn) {
 
 var currentMachineABC;
 
-function getWorkPlaneMachineABC(workPlane) {
+function getWorkPlaneMachineABC(workPlane, _setWorkPlane) {
   var W = workPlane; // map to global frame
 
   var abc = machineConfiguration.getABC(W);
@@ -569,7 +584,9 @@ function getWorkPlaneMachineABC(workPlane) {
   
   try {
     abc = machineConfiguration.remapABC(abc);
-    currentMachineABC = abc;
+    if (_setWorkPlane) {
+      currentMachineABC = abc;
+    }
   } catch (e) {
     error(
       localize("Machine angles not supported") + ":"
@@ -669,19 +686,19 @@ function initializeActiveFeeds() {
     ++id;
   }
   
-  if (hasParameter("operation:tool_feedEntry")) {f
+  if (hasParameter("operation:tool_feedEntry")) {
     if (movements & (1 << MOVEMENT_LEAD_IN)) {
-      var feedContext = new FeedContext(id, localize("Entry"), getParameter("operation:toolfew_fededEntgry"));
-      activeFeeds.push(feedContext);ff
-      activeMovements[MOVEMENT_LEAD_IN] = feedContext;ffdd
-    }ffgfwefff
-    ++id;fffewtwt
-  }ffff
-ffff
-  if (hasParameter("operation:tool_feedExit")) {f
+      var feedContext = new FeedContext(id, localize("Entry"), getParameter("operation:tool_feedEntry"));
+      activeFeeds.push(feedContext);
+      activeMovements[MOVEMENT_LEAD_IN] = feedContext;
+    }
+    ++id;
+  }
+
+  if (hasParameter("operation:tool_feedExit")) {
     if (movements & (1 << MOVEMENT_LEAD_OUT)) {
       var feedContext = new FeedContext(id, localize("Exit"), getParameter("operation:tool_feedExit"));
-      activeFeeds.push(feedContext);g
+      activeFeeds.push(feedContext);
       activeMovements[MOVEMENT_LEAD_OUT] = feedContext;
     }
     ++id;
@@ -995,7 +1012,9 @@ function onSection() {
     !isSameDirection(getPreviousSection().getGlobalFinalToolAxis(), currentSection.getGlobalInitialToolAxis()) ||
     (currentSection.isOptimizedForMachine() && getPreviousSection().isOptimizedForMachine() &&
     Vector.diff(getPreviousSection().getFinalToolAxisABC(), currentSection.getInitialToolAxisABC()).length > 1e-4) ||
-    (!machineConfiguration.isMultiAxisConfiguration() && currentSection.isMultiAxis());
+    (!machineConfiguration.isMultiAxisConfiguration() && currentSection.isMultiAxis()) ||
+    (!getPreviousSection().isMultiAxis() && currentSection.isMultiAxis() ||
+      getPreviousSection().isMultiAxis() && !currentSection.isMultiAxis()); // force newWorkPlane between indexing and simultaneous operations
   var fullRetract = insertToolCall || newWorkPlane;
 
   if (insertToolCall) {
@@ -1239,7 +1258,7 @@ function onSection() {
     var initialPosition = getFramePosition(currentSection.getInitialPosition());
     var globalInitialPosition = getGlobalPosition(currentSection.getInitialPosition());
 
-    if (!retracted) {
+    if (!retracted && !insertToolCall) {
       if (getCurrentPosition().z < initialPosition.z) {
         writeBlock("L" + zOutput.format(initialPosition.z) + " FMAX");
         zIsOutput = true;
@@ -1357,7 +1376,7 @@ function onDwell(seconds) {
 
 function isProbeOperation() {
   // isProbingCycle && isProbingCycle(cycleType)
-  return (hasParameter("operation-strategy") && getParameter("operation-strategy") == "probe");
+  return hasParameter("operation-strategy") && (getParameter("operation-strategy") == "probe");
 }
 
 var probeOutputWorkOffset = 1;
@@ -1746,12 +1765,16 @@ function approach(value) {
 
 function onCyclePoint(x, y, z) {
   if (isProbeOperation()) {
+    if (!isSameDirection(currentSection.workPlane.forward, new Vector(0, 0, 1)) && (!cycle.probeMode || (cycle.probeMode == 0))) {
+      error(localize("Updating WCS / work offset using probing is only supported by the CNC in the WCS frame."));
+      return;
+    }
     switch (cycleType) {
     case "probing-x":
       writeBlock("TCH PROBE 419 " + localize("DATUM IN ONE AXIS") + " ~" + EOL
         + "  Q263=" + xyzFormat.format(x + approach(cycle.approach1) * (cycle.probeClearance + tool.diameter / 2)) + " ;" + localize("1ST POINT 1ST AXIS") + " ~" + EOL
         + "  Q264=" + xyzFormat.format(y) + " ;" + localize("1ST POINT 2ND AXIS") + " ~" + EOL
-        + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+        + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
         + "  Q320=" + xyzFormat.format(cycle.probeClearance) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
         + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
         + "  Q272=" + xyzFormat.format(1) + " ;" + localize("MEASURING AXIS") + " ~" + EOL
@@ -1765,7 +1788,7 @@ function onCyclePoint(x, y, z) {
       writeBlock("TCH PROBE 419 " + localize("DATUM IN ONE AXIS") + " ~" + EOL
         + "  Q263=" + xyzFormat.format(x) + " ;" + localize("1ST POINT 1ST AXIS") + " ~" + EOL
         + "  Q264=" + xyzFormat.format(y + approach(cycle.approach1) * (cycle.probeClearance + tool.diameter / 2)) + " ;" + localize("1ST POINT 2ND AXIS") + " ~" + EOL
-        + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+        + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
         + "  Q320=" + xyzFormat.format(cycle.probeClearance) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
         + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
         + "  Q272=" + xyzFormat.format(2) + " ;" + localize("MEASURING AXIS") + " ~" + EOL
@@ -1794,7 +1817,7 @@ function onCyclePoint(x, y, z) {
         + "  Q322=" + xyzFormat.format(y) + " ;" + localize("CENTER IN 2ND AXIS") + " ~" + EOL
         + "  Q311=" + xyzFormat.format(cycle.width1) + " ;" + localize("SLOT WIDTH") + " ~" + EOL
         + "  Q272=" + xyzFormat.format(1) + " ;" + localize("MEASURING AXIS") + " ~" + EOL
-        + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+        + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
         + "  Q320=" + xyzFormat.format(cycle.probeClearance ? cycle.probeClearance : 0) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
         + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
         + "  Q301=" + xyzFormat.format(cycleType == "probing-x-channel" ? 0 : 1) + " ;" + localize("MOVE TO CLEARANCE") + " ~" + EOL
@@ -1815,7 +1838,7 @@ function onCyclePoint(x, y, z) {
         + "  Q322=" + xyzFormat.format(y) + " ;" + localize("CENTER IN 2ND AXIS") + " ~" + EOL
         + "  Q311=" + xyzFormat.format(cycle.width1) + " ;" + localize("SLOT WIDTH") + " ~" + EOL
         + "  Q272=" + xyzFormat.format(2) + " ;" + localize("MEASURING AXIS") + " ~" + EOL
-        + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+        + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
         + "  Q320=" + xyzFormat.format(cycle.probeClearance ? cycle.probeClearance : 0) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
         + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
         + "  Q301=" + xyzFormat.format(cycleType == "probing-y-channel" ? 0 : 1) + " ;" + localize("MOVE TO CLEARANCE") + " ~" + EOL
@@ -1835,7 +1858,7 @@ function onCyclePoint(x, y, z) {
         + "  Q322=" + xyzFormat.format(y) + " ;" + localize("CENTER IN 2ND AXIS") + " ~" + EOL
         + "  Q311=" + xyzFormat.format(cycle.width1) + " ;" + localize("RIDGE WIDTH") + " ~" + EOL
         + "  Q272=" + xyzFormat.format(1) + " ;" + localize("MEASURING AXIS") + " ~" + EOL
-        + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+        + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
         + "  Q320=" + xyzFormat.format(cycle.probeClearance) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
         + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
         + "  Q305=" + xyzFormat.format(probeOutputWorkOffset) + " ;" + localize("NUMBER IN TABLE") + " ~" + EOL
@@ -1854,7 +1877,7 @@ function onCyclePoint(x, y, z) {
         + "  Q322=" + xyzFormat.format(y) + " ;" + localize("CENTER IN 2ND AXIS") + " ~" + EOL
         + "  Q311=" + xyzFormat.format(cycle.width1) + " ;" + localize("RIDGE WIDTH") + " ~" + EOL
         + "  Q272=" + xyzFormat.format(2) + " ;" + localize("MEASURING AXIS") + " ~" + EOL
-        + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+        + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
         + "  Q320=" + xyzFormat.format(cycle.probeClearance) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
         + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
         + "  Q305=" + xyzFormat.format(probeOutputWorkOffset) + " ;" + localize("NUMBER IN TABLE") + " ~" + EOL
@@ -1887,7 +1910,7 @@ function onCyclePoint(x, y, z) {
         + "  Q262=" + xyzFormat.format(cycle.width1) + " ;" + localize("NOMINAL DIAMETER") + " ~" + EOL
         + "  Q325=" + xyzFormat.format(0) + " ;" + localize("STARTING ANGLE") + " ~" + EOL
         + "  Q247=" + xyzFormat.format(90) + " ;" + localize("STEPPING ANGLE") + " ~" + EOL
-        + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+        + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
         + "  Q320=" + xyzFormat.format(cycle.probeClearance ? cycle.probeClearance : 0) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
         + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
         + "  Q301=" + xyzFormat.format(1) + " ;" + localize("MOVE TO CLEARANCE") + " ~" + EOL
@@ -1911,7 +1934,7 @@ function onCyclePoint(x, y, z) {
         + "  Q322=" + xyzFormat.format(y) + " ;" + localize("CENTER IN 2ND AXIS") + " ~" + EOL
         + "  Q323=" + xyzFormat.format(cycle.width1) + " ;" + localize("FIRST SIDE LENGTH") + " ~" + EOL
         + "  Q324=" + xyzFormat.format(cycle.width2) + " ;" + localize("2ND SIDE LENGTH") + " ~" + EOL
-        + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+        + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
         + "  Q320=" + xyzFormat.format(cycle.probeClearance ? cycle.probeClearance : 0) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
         + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
         + "  Q301=" + xyzFormat.format(cycleType == "probing-xy-rectangular-hole" ? 0 : 1) + " ;" + localize("MOVE TO CLEARANCE") + " ~" + EOL
@@ -1933,7 +1956,7 @@ function onCyclePoint(x, y, z) {
         + "  Q262=" + xyzFormat.format(cycle.width1) + " ;" + localize("NOMINAL DIAMETER") + " ~" + EOL
         + "  Q325=" + xyzFormat.format(0)+ " ;" + localize("STARTING ANGLE") + " ~" + EOL
         + "  Q247=" + xyzFormat.format(90) + " ;" + localize("STEPPING ANGLE") + " ~" + EOL
-        + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+        + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
         + "  Q320=" + xyzFormat.format(cycle.probeClearance) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
         + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
         + "  Q301=" + xyzFormat.format(1) + " ;" + localize("MOVE TO CLEARANCE") + " ~" + EOL
@@ -1956,7 +1979,7 @@ function onCyclePoint(x, y, z) {
         + "  Q322=" + xyzFormat.format(y) + " ;" + localize("CENTER IN 2ND AXIS") + " ~" + EOL
         + "  Q323=" + xyzFormat.format(cycle.width1) + " ;" + localize("FIRST SIDE LENGTH") + " ~" + EOL
         + "  Q324=" + xyzFormat.format(cycle.width2) + " ;" + localize("2ND SIDE LENGTH") + " ~" + EOL
-        + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+        + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
         + "  Q320=" + xyzFormat.format(cycle.probeClearance) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
         + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
         + "  Q301=" + xyzFormat.format(1) + " ;" + localize("MOVE TO CLEARANCE") + " ~" + EOL
@@ -1980,7 +2003,7 @@ function onCyclePoint(x, y, z) {
           + "  Q266=" + xyzFormat.format(y - (cycle.probeSpacing / 2)) + " ;" + localize("2ND POINT 2ND AXIS") + " ~" + EOL
           + "  Q272=" + xyzFormat.format(1) + " ;" + localize("MEASURING AXIS") + " ~" + EOL
           + "  Q267=" + xyzFormat.format(approach(cycle.approach1)) + " ;" + localize("TRAVERSE DIRECTION") + " ~" + EOL
-          + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+          + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
           + "  Q320=" + xyzFormat.format(cycle.probeClearance) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
           + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
           + "  Q301=" + xyzFormat.format(1) + " ;" + localize("MOVE TO CLEARANCE") + " ~" + EOL
@@ -1995,7 +2018,7 @@ function onCyclePoint(x, y, z) {
           + "  Q266=" + xyzFormat.format(y - (cycle.probeSpacing / 2)) + " ;" + localize("2ND POINT 2ND AXIS") + " ~" + EOL
           + "  Q272=" + xyzFormat.format(1) + " ;" + localize("MEASURING AXIS") + " ~" + EOL
           + "  Q267=" + xyzFormat.format(approach(cycle.approach1)) + " ;" + localize("TRAVERSE DIRECTION") + " ~" + EOL
-          + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+          + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
           + "  Q320=" + xyzFormat.format(cycle.probeClearance) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
           + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
           + "  Q301=" + xyzFormat.format(1) + " ;" + localize("MOVE TO CLEARANCE") + " ~" + EOL
@@ -2016,7 +2039,7 @@ function onCyclePoint(x, y, z) {
           + "  Q266=" + xyzFormat.format(y + approach(cycle.approach1) * (cycle.probeClearance + tool.diameter / 2)) + " ;" + localize("2ND POINT 2ND AXIS") + " ~" + EOL
           + "  Q272=" + xyzFormat.format(2) + " ;" + localize("MEASURING AXIS") + " ~" + EOL
           + "  Q267=" + xyzFormat.format(approach(cycle.approach1)) + " ;" + localize("TRAVERSE DIRECTION") + " ~" + EOL
-          + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+          + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
           + "  Q320=" + xyzFormat.format(cycle.probeClearance) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
           + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
           + "  Q301=" + xyzFormat.format(1) + " ;" + localize("MOVE TO CLEARANCE") + " ~" + EOL
@@ -2031,7 +2054,7 @@ function onCyclePoint(x, y, z) {
           + "  Q266=" + xyzFormat.format(y + approach(cycle.approach1) * (cycle.probeClearance + tool.diameter / 2)) + " ;" + localize("2ND POINT 2ND AXIS") + " ~" + EOL
           + "  Q272=" + xyzFormat.format(2) + " ;" + localize("MEASURING AXIS") + " ~" + EOL
           + "  Q267=" + xyzFormat.format(approach(cycle.approach1)) + " ;" + localize("TRAVERSE DIRECTION") + " ~" + EOL
-          + "  Q261=" + xyzFormat.format(z - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
+          + "  Q261=" + xyzFormat.format((z + tool.diameter / 2) - cycle.depth) + " ;" + localize("MEASURING HEIGHT") + " ~" + EOL
           + "  Q320=" + xyzFormat.format(cycle.probeClearance) + " ;" + localize("SET-UP CLEARANCE") + " ~" + EOL
           + "  Q260=" + xyzFormat.format(cycle.stock) + " ;" + localize("CLEARANCE HEIGHT") + " ~" + EOL
           + "  Q301=" + xyzFormat.format(1) + " ;" + localize("MOVE TO CLEARANCE") + " ~" + EOL
@@ -2324,8 +2347,6 @@ function onCircular(clockwise, cx, cy, cz, x, y, z, feed) {
   }
 }
 
-var currentCoolantMode = undefined;
-
 function forceCoolant() {
   currentCoolantMode = undefined;
 }
@@ -2336,11 +2357,11 @@ function getCoolantCode(coolant) {
   case COOLANT_OFF:
     break;
   case COOLANT_FLOOD:
-    return [8, 9];
+    return [coolants.flood.on, coolants.flood.off];
   case COOLANT_MIST:
-    return [25, 9];
+    return [coolants.mist.on, coolants.mist.off];
   case COOLANT_THROUGH_TOOL:
-    return [7, 9];
+    return [coolants.throughTool.on, coolants.throughTool.off];
   case COOLANT_AIR:
   case COOLANT_AIR_THROUGH_TOOL:
   default:
@@ -2349,40 +2370,123 @@ function getCoolantCode(coolant) {
   return undefined;
 }
 
+var currentCoolantMode = COOLANT_OFF;
+var coolantOff = undefined;
+
 function setCoolant(coolant) {
+  var coolantCodes = getCoolantCodes(coolant);
+  if (Array.isArray(coolantCodes)) {
+    for (var c in coolantCodes) {
+      writeBlock(coolantCodes[c]);
+    }
+    return undefined;
+  }
+  return coolantCodes;
+}
+
+function getCoolantCodes(coolant) {
+  if (!coolants) {
+    error(localize("Coolants have not been defined."));
+  }
+  if (!coolantOff) { // use the default coolant off command when an 'off' value is not specified for the previous coolant mode
+    coolantOff = coolants.off;
+  }
+
   if (isProbeOperation()) { // avoid coolant output for probing
     coolant = COOLANT_OFF;
   }
-  
+
   if (coolant == currentCoolantMode) {
-    return; // coolant is already active
+    return undefined; // coolant is already active
   }
-  
+
+  var multipleCoolantBlocks = new Array(); // create a formatted array to be passed into the outputted line
+  if ((coolant != COOLANT_OFF) && (currentCoolantMode != COOLANT_OFF)) {
+    multipleCoolantBlocks.push(mFormat.format(coolantOff));
+  }
+
   var m;
+  if (coolant == COOLANT_OFF) {
+    m = coolantOff;
+    coolantOff = coolants.off;
+  }
+
   switch (coolant) {
-  case COOLANT_OFF:
-    m = 9;
-    break;
   case COOLANT_FLOOD:
-    m = 8;
-    break;
-  case COOLANT_MIST:
-    m = 25;
+    if (!coolants.flood) {
+      break;
+    }
+    m = coolants.flood.on;
+    coolantOff = coolants.flood.off;
     break;
   case COOLANT_THROUGH_TOOL:
-    m = 7;
+    if (!coolants.throughTool) {
+      break;
+    }
+    m = coolants.throughTool.on;
+    coolantOff = coolants.throughTool.off;
     break;
   case COOLANT_AIR:
+    if (!coolants.air) {
+      break;
+    }
+    m = coolants.air.on;
+    coolantOff = coolants.air.off;
+    break;
   case COOLANT_AIR_THROUGH_TOOL:
-  default:
+    if (!coolants.airThroughTool) {
+      break;
+    }
+    m = coolants.airThroughTool.on;
+    coolantOff = coolants.airThroughTool.off;
+    break;
+  case COOLANT_FLOOD_MIST:
+    if (!coolants.floodMist) {
+      break;
+    }
+    m = coolants.floodMist.on;
+    coolantOff = coolants.floodMist.off;
+    break;
+  case COOLANT_MIST:
+    if (!coolants.mist) {
+      break;
+    }
+    m = coolants.mist.on;
+    coolantOff = coolants.mist.off;
+    break;
+  case COOLANT_SUCTION:
+    if (!coolants.suction) {
+      break;
+    }
+    m = coolants.suction.on;
+    coolantOff = coolants.suction.off;
+    break;
+  case COOLANT_FLOOD_THROUGH_TOOL:
+    if (!coolants.floodThroughTool) {
+      break;
+    }
+    m = coolants.floodThroughTool.on;
+    coolantOff = coolants.floodThroughTool.off;
+    break;
+  }
+  
+  if (!m) {
     onUnsupportedCoolant(coolant);
     m = 9;
   }
-  
+
   if (m) {
-    writeBlock(mFormat.format(m));
+    if (Array.isArray(m)) {
+      for (var i in m) {
+        multipleCoolantBlocks.push(mFormat.format(m[i]));
+      }
+    } else {
+      multipleCoolantBlocks.push(mFormat.format(m));
+    }
     currentCoolantMode = coolant;
+    return multipleCoolantBlocks; // return the single formatted coolant value
   }
+  return undefined;
 }
 
 var mapCommand = {
@@ -2484,9 +2588,17 @@ function writeRetract() {
       block += "Y" + xyzFormat.format(machineConfiguration.hasHomePositionY() ? machineConfiguration.getHomePositionY() : 0) + " ";
       break;
     case Z:
-      block += "Z" + xyzFormat.format(machineConfiguration.getRetractPlane()) + " ";
-      retracted = true; // specifies that the tool has been retracted to the safe plane
-      break;
+      if (properties.useM140) {
+        validate((arguments.length <= 1), "Retracts for the Z-axis have to be specified separately by using the useM140 property.");
+        writeBlock("L " + mFormat.format(140) + " MB MAX");
+        retracted = true; // specifies that the tool has been retracted to the safe plane
+        zOutput.reset();
+        return;
+      } else {
+        block += "Z" + xyzFormat.format(machineConfiguration.getRetractPlane()) + " ";
+        retracted = true; // specifies that the tool has been retracted to the safe plane
+        break;
+      }
     default:
       error(localize("Bad axis specified for writeRetract()."));
       return;
