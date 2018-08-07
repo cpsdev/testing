@@ -1431,5 +1431,4 @@ function onClose() {
   onImpliedCommand(COMMAND_STOP_SPINDLE);
   writeBlock(mFormat.format(330)); // stop program, spindle stop, coolant off
   writeln("%");
-  
 }
