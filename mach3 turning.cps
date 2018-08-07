@@ -1429,7 +1429,7 @@ function onClose() {
 
   onImpliedCommand(COMMAND_END);
   onImpliedCommand(COMMAND_STOP_SPINDLE);
-  writeBlock(mFormat.format(308)); // stop program, spindle stop, coolant off
+  writeBlock(mFormat.format(30)); // stop program, spindle stop, coolant off
   writeln("%");
 } 
  
