@@ -1206,6 +1206,7 @@ function setCoolant(coolant) {
   if (coolant == currentCoolantMode) {
     return; // coolant is already active
   }
+  
 
   var m = undefined;
   if (coolant == COOLANT_OFF) {
