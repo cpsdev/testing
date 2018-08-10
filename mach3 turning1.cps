@@ -1206,6 +1206,7 @@ function setCoolant(coolant) {
   if (coolant == currentCoolantMode) {
     return; // coolant is already active
   }
+  
 
   var m = undefined;
   if (coolant == COOLANT_OFF) {
@@ -1429,6 +1430,6 @@ function onClose() {
 
   onImpliedCommand(COMMAND_END);
   onImpliedCommand(COMMAND_STOP_SPINDLE);
-  writeBlock(mFormat.format(30)); // stop program, spindle stop, coolant off
+  writeBlock(mFormat.format(330)); // stop program, spindle stop, coolant off
   writeln("%");
 }

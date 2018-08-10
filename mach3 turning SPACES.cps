@@ -11,11 +11,11 @@
 */
 
 description = "Mach3 Turning";
-vendor = "Artsoft";
+vendor = "Artsoft";ewf
 vendorUrl = "http://www.machsupport.com";
 legal = "Copyright (C) 2012-2018 by Autodesk, Inc.";
 certificationLevel = 2;
-minimumRevision = 40783;
+minimumRevision = 40783;esfw
 
 longDescription = "Generic turning post for Mach3. Use Turret 0 for Positional Turret, Turret 101 for QCTP on X- Post, Turret 102 for QCTP on X+ Post, Turret 103 for Gang Tooling on X- Post, Turret 104 for Gang Tooling on X+ Tool Post.";
 
@@ -46,7 +46,7 @@ properties = {
   optionalStop: true, // optional stop
   separateWordsWithSpace: true, // specifies that the words should be separated with a white space
   useRadius: false, // specifies that arcs should be output using the radius (R word) instead of the I, J, and K words.
-  maximumSpindleSpeed: 4010, // specifies the maximum spindle speed
+  maximumSpindleSpeed: 4000, // specifies the maximum spindle speed
   useParametricFeed: false, // specifies that feed should be output using Q values
   showNotes: false, // specifies that operation notes should be output.
   g53HomePositionX: 0, // home position for X-axis
