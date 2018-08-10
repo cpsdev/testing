@@ -1408,6 +1408,7 @@ function onClose() {
 
   onCommand(COMMAND_COOLANT_OFF);
 
+
   // we might want to retract in Z before X
   // writeBlock(gFormat.format(28), "U" + xFormat.format(0)); // retract
 
@@ -1429,6 +1430,6 @@ function onClose() {
 
   onImpliedCommand(COMMAND_END);
   onImpliedCommand(COMMAND_STOP_SPINDLE);
-  writeBlock(mFormat.format(380)); // stop program, spindle stop, coolant off
+  writeBlock(mFormat.format(30)); // stop program, spindle stop, coolant off
   writeln("%");
 }
