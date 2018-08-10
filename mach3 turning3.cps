@@ -1411,6 +1411,7 @@ function onClose() {
   // we might want to retract in Z before X
   // writeBlock(gFormat.format(28), "U" + xFormat.format(0)); // retract
 
+  
   forceXYZ();
   if (!machineConfiguration.hasHomePositionX() && !machineConfiguration.hasHomePositionY()) {
     writeBlock(gAbsIncModal.format(91), gFormat.format(28), "X" + xFormat.format(0), conditional(yOutput.isEnabled(), "Y" + yFormat.format(0)), "Z" + zFormat.format(0)); // return to home
@@ -1429,6 +1430,6 @@ function onClose() {
 
   onImpliedCommand(COMMAND_END);
   onImpliedCommand(COMMAND_STOP_SPINDLE);
-  writeBlock(mFormat.format(380)); // stop program, spindle stop, coolant off
+  writeBlock(mFormat.format(330)); // stop program, spindle stop, coolant off
   writeln("%");
 }
