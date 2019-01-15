@@ -723,7 +723,7 @@ function onSection() {
       error(localize("Compensation offset is out of range."));
       return;
     }
-    writeBlock("T8878" + toolFormat.format(tool.number * 100 + compensationOffset));
+    writeBlock("T78" + toolFormat.format(tool.number * 100 + compensationOffset));
     if (tool.comment) {
       writeComment(tool.comment);
     }
