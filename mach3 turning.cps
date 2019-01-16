@@ -46,7 +46,7 @@ properties = {
   optionalStop: true, // optional stop
   separateWordsWithSpace: true, // specifies that the words should be separated with a white space
   useRadius: false, // specifies that arcs should be output using the radius (R word) instead of the I, J, and K words.
-  maximumSpindleSpeed: 4010, // specifies the maximum spindle speed
+  maximumSpindleSpeed: 4000, // specifies the maximum spindle speed
   useParametricFeed: false, // specifies that feed should be output using Q values
   showNotes: false, // specifies that operation notes should be output.
   g53HomePositionX: 0, // home position for X-axis
@@ -289,9 +289,8 @@ function writeOptionalBlock() {
 }
 
 function formatComment(text) {
-  return text;
+  return "(" + filterText(String(text).toUpperCase(), permittedCommentChars).replace(/[()]/g, "") + ")";
 }
-
 
 /**
   Output a comment.
@@ -724,7 +723,7 @@ function onSection() {
       error(localize("Compensation offset is out of range."));
       return;
     }
-    writeBlock("T78" + toolFormat.format(tool.number * 100 + compensationOffset));
+    writeBlock("T" + toolFormat.format(tool.number * 100 + compensationOffset));
     if (tool.comment) {
       writeComment(tool.comment);
     }
@@ -1266,7 +1265,11 @@ function startSpindle(tappingMode, forceRPMMode, initialPosition) {
   if (tool.getSpindleMode() == SPINDLE_CONSTANT_SURFACE_SPEED) {
     _spindleSpeed = tool.surfaceSpeed * ((unit == MM) ? 1/1000.0 : 1/12.0);
     if (forceRPMMode) { // RPM mode is forced until move to initial position
-      _spindleSpeed = Math.min((_spindleSpeed * ((unit == MM) ? 1000.0 : 12.0) / (Math.PI*Math.abs(initialPosition.x*2))), maximumSpindleSpeed);
+      if (xFormat.getResultingValue(initialPosition.x) == 0) {
+        _spindleSpeed = maximumSpindleSpeed;
+      } else {
+        _spindleSpeed = Math.min((_spindleSpeed * ((unit == MM) ? 1000.0 : 12.0) / (Math.PI*Math.abs(initialPosition.x*2))), maximumSpindleSpeed);
+      }
       spindleMode = getCode("CONSTANT_SURFACE_SPEED_OFF");
     } else {
       writeBlock(gFormat.format(48), sOutput.format(maximumSpindleSpeed));
@@ -1409,7 +1412,6 @@ function onClose() {
 
   onCommand(COMMAND_COOLANT_OFF);
 
-
   // we might want to retract in Z before X
   // writeBlock(gFormat.format(28), "U" + xFormat.format(0)); // retract
 
@@ -1433,5 +1435,4 @@ function onClose() {
   onImpliedCommand(COMMAND_STOP_SPINDLE);
   writeBlock(mFormat.format(30)); // stop program, spindle stop, coolant off
   writeln("%");
-  
 }
