@@ -6,7 +6,7 @@
 
   $Revision$
   $Date$
-
+  
   FORKID {61167F95-13C8-423D-B5C7-A64F747AAA5E}
 */
 
@@ -33,6 +33,8 @@ maximumCircularSweep = toRad(180);
 allowHelicalMoves = true;
 allowedCircularPlanes = undefined; // allow any circular motion
 
+
+
 // user-defined properties
 properties = {
   writeMachine: true, // write machine
@@ -55,29 +57,29 @@ properties = {
 
 // user-defined property definitions
 propertyDefinitions = {
-  writeMachine: {title: "Write machine", description: "Output the machine settings in the header of the code.", group: 0, type: "boolean"},
-  writeTools: {title: "Write tool list", description: "Output a tool list in the header of the code.", group: 0, type: "boolean"},
-  useG28: {title: "G28 Safe retracts", description: "Disable to avoid G28 output for safe machine retracts. When disabled, you must manually ensure safe retracts.", type: "boolean"},
-  useM6: {title: "Use M6", description: "Disable to avoid outputting M6. If disabled Preload is also disabled", group: 1, type: "boolean"},
-  preloadTool: {title: "Preload tool", description: "Preloads the next tool at a tool change (if any).", group: 1, type: "boolean"},
-  useG43: {title: "Use G43", description: "Use G43 tool offsets.", group: 1, type: "boolean"},
-  showSequenceNumbers: {title: "Use sequence numbers", description: "Use sequence numbers for each block of outputted code.", group: 1, type: "boolean"},
-  sequenceNumberStart: {title: "Start sequence number", description: "The number at which to start the sequence numbers.", group: 1, type: "integer"},
-  sequenceNumberIncrement: {title: "Sequence number increment", description: "The amount by which the sequence number is incremented by in each block.", group: 1, type: "integer"},
-  optionalStop: {title: "Optional stop", description: "Outputs optional stop code during when necessary in the code.", type: "boolean"},
-  separateWordsWithSpace: {title: "Separate words with space", description: "Adds spaces between words if 'yes' is selected.", type: "boolean"},
-  useRadius: {title: "Radius arcs", description: "If yes is selected, arcs are outputted using radius values rather than IJK.", type: "boolean"},
-  dwellInSeconds: {title: "Dwell in seconds", description: "Specifies the unit for dwelling, set to 'Yes' for seconds and 'No' for milliseconds.", type: "boolean"},
-  setupAtCenterOfCAxis: {title: "Setup at center of C axis", description: "Specifies if the machine is zeroed at the center of C-axis rotation.", type: "boolean"},
-  safeRetractDistance: {title: "Safe retract distance", description: "A set distance to add to the tool length for rewind C-axis tool retract.", type: "number"},
+  writeMachine: {title:"Write machine", description:"Output the machine settings in the header of the code.", group:0, type:"boolean"},
+  writeTools: {title:"Write tool list", description:"Output a tool list in the header of the code.", group:0, type:"boolean"},
+  useG28: {title:"G28 Safe retracts", description:"Disable to avoid G28 output for safe machine retracts. When disabled, you must manually ensure safe retracts.", type:"boolean"},
+  useM6: {title:"Use M6", description:"Disable to avoid outputting M6. If disabled Preload is also disabled", group:1, type:"boolean"},
+  preloadTool: {title:"Preload tool", description:"Preloads the next tool at a tool change (if any).", group:1, type:"boolean"},
+  useG43: {title:"Use G43", description:"Use G43 tool offsets.", group:1, type:"boolean"},
+  showSequenceNumbers: {title:"Use sequence numbers", description:"Use sequence numbers for each block of outputted code.", group:1, type:"boolean"},
+  sequenceNumberStart: {title:"Start sequence number", description:"The number at which to start the sequence numbers.", group:1, type:"integer"},
+  sequenceNumberIncrement: {title:"Sequence number increment", description:"The amount by which the sequence number is incremented by in each block.", group:1, type:"integer"},
+  optionalStop: {title:"Optional stop", description:"Outputs optional stop code during when necessary in the code.", type:"boolean"},
+  separateWordsWithSpace: {title:"Separate words with space", description:"Adds spaces between words if 'yes' is selected.", type:"boolean"},
+  useRadius: {title:"Radius arcs", description:"If yes is selected, arcs are outputted using radius values rather than IJK.", type:"boolean"},
+  dwellInSeconds: {title:"Dwell in seconds", description:"Specifies the unit for dwelling, set to 'Yes' for seconds and 'No' for milliseconds.", type:"boolean"},
+  setupAtCenterOfCAxis: {title:"Setup at center of C axis", description:"Specifies if the machine is zeroed at the center of C-axis rotation.", type:"boolean"},
+  safeRetractDistance: {title:"Safe retract distance", description:"A set distance to add to the tool length for rewind C-axis tool retract.", type:"number"},
   useRigidTapping: {
     title: "Use rigid tapping",
     description: "Select 'Yes' to enable, 'No' to disable, or 'Without spindle direction' to enable rigid tapping without outputting the spindle direction block.",
     type: "enum",
-    values: [
-      {title: "Yes", id: "yes"},
-      {title: "No", id: "no"},
-      {title: "Without spindle direction", id: "without"}
+    values:[
+      {title:"Yes", id:"yes"},
+      {title:"No", id:"no"},
+      {title:"Without spindle direction", id:"without"}
     ]
   }
 };
@@ -100,40 +102,40 @@ var coolants = [
   {id: COOLANT_OFF, off: 9}
 ];
 
-var nFormat = createFormat({prefix: "N", decimals: 0});
-var gFormat = createFormat({prefix: "G", decimals: 1});
-var mFormat = createFormat({prefix: "M", decimals: 0});
-var hFormat = createFormat({prefix: "H", decimals: 0});
-var pFormat = createFormat({prefix: "P", decimals: (unit == MM ? 3 : 4), scale: 0.5});
-var xyzFormat = createFormat({decimals: (unit == MM ? 3 : 4), forceDecimal: true});
+var nFormat = createFormat({prefix:"N", decimals:0});
+var gFormat = createFormat({prefix:"G", decimals:1});
+var mFormat = createFormat({prefix:"M", decimals:0});
+var hFormat = createFormat({prefix:"H", decimals:0});
+var pFormat = createFormat({prefix:"P", decimals:(unit == MM ? 3 : 4), scale:0.5});
+var xyzFormat = createFormat({decimals:(unit == MM ? 3 : 4), forceDecimal:true});
 var rFormat = xyzFormat; // radius
-var abcFormat = createFormat({decimals: 3, forceDecimal: true, scale: DEG});
-var feedFormat = createFormat({decimals: (unit == MM ? 0 : 1), forceDecimal: true});
-var inverseFormat = createFormat({decimals: 2, forceDecimal: true});
-var toolFormat = createFormat({decimals: 0});
-var rpmFormat = createFormat({decimals: 0});
-var secFormat = createFormat({decimals: 3, forceDecimal: true}); // seconds - range 0.001-99999.999
-var milliFormat = createFormat({decimals: 0}); // milliseconds // range 1-9999
-var taperFormat = createFormat({decimals: 1, scale: DEG});
+var abcFormat = createFormat({decimals:3, forceDecimal:true, scale:DEG});
+var feedFormat = createFormat({decimals:(unit == MM ? 0 : 1), forceDecimal:true});
+var inverseFormat = createFormat({decimals:2, forceDecimal:true});
+var toolFormat = createFormat({decimals:0});
+var rpmFormat = createFormat({decimals:0});
+var secFormat = createFormat({decimals:3, forceDecimal:true}); // seconds - range 0.001-99999.999
+var milliFormat = createFormat({decimals:0}); // milliseconds // range 1-9999
+var taperFormat = createFormat({decimals:1, scale:DEG});
 
-var xOutput = createVariable({prefix: "X"}, xyzFormat);
-var yOutput = createVariable({prefix: "Y"}, xyzFormat);
-var zOutput = createVariable({onchange: function () {retracted = false;}, prefix: "Z"}, xyzFormat);
-var aOutput = createVariable({prefix: "A"}, abcFormat);
-var bOutput = createVariable({prefix: "B"}, abcFormat);
-var cOutput = createVariable({prefix: "C"}, abcFormat);
-var feedOutput = createVariable({prefix: "F"}, feedFormat);
-var inverseTimeOutput = createVariable({prefix: "F", force: true}, inverseFormat);
-var sOutput = createVariable({prefix: "S", force: true}, rpmFormat);
+var xOutput = createVariable({prefix:"X"}, xyzFormat);
+var yOutput = createVariable({prefix:"Y"}, xyzFormat);
+var zOutput = createVariable({onchange:function () {retracted = false;}, prefix:"Z"}, xyzFormat);
+var aOutput = createVariable({prefix:"A"}, abcFormat);
+var bOutput = createVariable({prefix:"B"}, abcFormat);
+var cOutput = createVariable({prefix:"C"}, abcFormat);
+var feedOutput = createVariable({prefix:"F"}, feedFormat);
+var inverseTimeOutput = createVariable({prefix:"F", force:true}, inverseFormat);
+var sOutput = createVariable({prefix:"S", force:true}, rpmFormat);
 var pOutput = createVariable({}, pFormat);
 
 // circular output
-var iOutput = createReferenceVariable({prefix: "I", force: true}, xyzFormat);
-var jOutput = createReferenceVariable({prefix: "J", force: true}, xyzFormat);
-var kOutput = createReferenceVariable({prefix: "K", force: true}, xyzFormat);
+var iOutput = createReferenceVariable({prefix:"I", force:true}, xyzFormat);
+var jOutput = createReferenceVariable({prefix:"J", force:true}, xyzFormat);
+var kOutput = createReferenceVariable({prefix:"K", force:true}, xyzFormat);
 
 var gMotionModal = createModal({}, gFormat); // modal group 1 // G0-G3, ...
-var gPlaneModal = createModal({onchange: function () {gMotionModal.reset();}}, gFormat); // modal group 2 // G17-19
+var gPlaneModal = createModal({onchange:function () {gMotionModal.reset();}}, gFormat); // modal group 2 // G17-19
 var gAbsIncModal = createModal({}, gFormat); // modal group 3 // G90-91
 var gFeedModeModal = createModal({}, gFormat); // modal group 5 // G93-94
 var gUnitModal = createModal({}, gFormat); // modal group 6 // G20-21
@@ -184,8 +186,8 @@ function onOpen() {
   }
 
   if (true) {
-    var bAxis = createAxis({coordinate: 1, table: false, axis: [1, 0, 0], range: [-180.00, 180.00]});
-    var cAxis = createAxis({coordinate: 2, table: false, axis: [0, 0, 1], offset: [cAxisOffset, 0, 0], range: [-360.00, 360.00], cyclic: false});
+    var bAxis = createAxis({coordinate:1, table:false, axis:[1, 0, 0], range:[-180.00, 180.00]});
+    var cAxis = createAxis({coordinate:2, table:false, axis:[0, 0, 1], offset:[cAxisOffset, 0, 0], range:[-360.00, 360.00], cyclic:false});
 
     machineConfiguration = new MachineConfiguration(bAxis, cAxis);
 
@@ -202,7 +204,7 @@ function onOpen() {
   if (!machineConfiguration.isMachineCoordinate(2)) {
     cOutput.disable();
   }
-
+  
   if (!properties.separateWordsWithSpace) {
     setWordSeparator("");
   }
@@ -212,7 +214,6 @@ function onOpen() {
   if (programName) {
     writeComment(programName);
   }
-
   if (programComment) {
     writeComment(programComment);
   }
@@ -231,7 +232,7 @@ function onOpen() {
       writeComment("  " + localize("model") + ": " + model);
     }
     if (description) {
-      writeComment("  " + localize("description") + ": " + description);
+      writeComment("  " + localize("description") + ": "  + description);
     }
   }
 
@@ -270,7 +271,7 @@ function onOpen() {
       }
     }
   }
-
+  
   if (false) {
     // check for duplicate tool number
     for (var i = 0; i < getNumberOfSections(); ++i) {
@@ -281,9 +282,9 @@ function onOpen() {
         var toolj = sectionj.getTool();
         if (tooli.number == toolj.number) {
           if (xyzFormat.areDifferent(tooli.diameter, toolj.diameter) ||
-            xyzFormat.areDifferent(tooli.cornerRadius, toolj.cornerRadius) ||
-            abcFormat.areDifferent(tooli.taperAngle, toolj.taperAngle) ||
-            (tooli.numberOfFlutes != toolj.numberOfFlutes)) {
+              xyzFormat.areDifferent(tooli.cornerRadius, toolj.cornerRadius) ||
+              abcFormat.areDifferent(tooli.taperAngle, toolj.taperAngle) ||
+              (tooli.numberOfFlutes != toolj.numberOfFlutes)) {
             error(
               subst(
                 localize("Using the same tool number for different cutter geometry for operation '%1' and '%2'."),
@@ -315,7 +316,7 @@ function onOpen() {
     writeBlock(gUnitModal.format(21));
     break;
   }
-
+  
   // startup block
   writeBlock(gFormat.format(40));
   writeBlock(gFormat.format(49));
@@ -364,9 +365,9 @@ function setWorkPlane(abc) {
   }
 
   if (!((currentWorkPlaneABC == undefined) ||
-    abcFormat.areDifferent(abc.x, currentWorkPlaneABC.x) ||
-    abcFormat.areDifferent(abc.y, currentWorkPlaneABC.y) ||
-    abcFormat.areDifferent(abc.z, currentWorkPlaneABC.z))) {
+        abcFormat.areDifferent(abc.x, currentWorkPlaneABC.x) ||
+        abcFormat.areDifferent(abc.y, currentWorkPlaneABC.y) ||
+        abcFormat.areDifferent(abc.z, currentWorkPlaneABC.z))) {
     return; // no change
   }
 
@@ -382,7 +383,7 @@ function setWorkPlane(abc) {
     conditional(machineConfiguration.isMachineCoordinate(1), bOutput.format(abc.y)),
     conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z))
   );
-
+  
   onCommand(COMMAND_LOCK_MULTI_AXIS);
 
   previousABC = abc;
@@ -405,7 +406,7 @@ function getWorkPlaneMachineABC(workPlane) {
   } else {
     abc = machineConfiguration.getPreferredABC(abc);
   }
-
+  
   try {
     abc = machineConfiguration.remapABC(abc);
     currentMachineABC = abc;
@@ -417,12 +418,12 @@ function getWorkPlaneMachineABC(workPlane) {
       + conditional(machineConfiguration.isMachineCoordinate(2), " C" + abcFormat.format(abc.z))
     );
   }
-
+  
   var direction = machineConfiguration.getDirection(abc);
   if (!isSameDirection(direction, W.forward)) {
     error(localize("Orientation not supported."));
   }
-
+  
   if (!machineConfiguration.isABCSupported(abc)) {
     error(
       localize("Work plane is not supported") + ":"
@@ -440,7 +441,7 @@ function getWorkPlaneMachineABC(workPlane) {
     var R = machineConfiguration.getRemainingOrientation(abc, W);
     setRotation(R);
   }
-
+  
   return abc;
 }
 
@@ -452,7 +453,7 @@ function onSection() {
   var insertToolCall = isFirstSection() ||
     currentSection.getForceToolChange && currentSection.getForceToolChange() ||
     (tool.number != getPreviousSection().getTool().number);
-
+  
   retracted = false;
   var newWorkOffset = isFirstSection() ||
     (getPreviousSection().workOffset != currentSection.workOffset); // work offset changes
@@ -478,10 +479,10 @@ function onSection() {
 
   if (insertToolCall) {
     forceWorkPlane();
-
+    
     onCommand(COMMAND_STOP_SPINDLE);
     // setCoolant(COOLANT_OFF);
-
+  
     if (!isFirstSection() && properties.optionalStop) {
       onCommand(COMMAND_OPTIONAL_STOP);
     }
@@ -529,11 +530,11 @@ function onSection() {
       }
     }
   }
-
+  
   if (insertToolCall ||
-    isFirstSection() ||
-    (rpmFormat.areDifferent(spindleSpeed, sOutput.getCurrent())) ||
-    (tool.clockwise != getPreviousSection().getTool().clockwise)) {
+      isFirstSection() ||
+      (rpmFormat.areDifferent(spindleSpeed, sOutput.getCurrent())) ||
+      (tool.clockwise != getPreviousSection().getTool().clockwise)) {
     if (spindleSpeed < 1) {
       error(localize("Spindle speed out of range."));
       return;
@@ -544,9 +545,9 @@ function onSection() {
 
     var tapping = hasParameter("operation:cycleType") &&
       ((getParameter("operation:cycleType") == "tapping") ||
-        (getParameter("operation:cycleType") == "right-tapping") ||
-        (getParameter("operation:cycleType") == "left-tapping") ||
-        (getParameter("operation:cycleType") == "tapping-with-chip-breaking"));
+      (getParameter("operation:cycleType") == "right-tapping") ||
+      (getParameter("operation:cycleType") == "left-tapping") ||
+      (getParameter("operation:cycleType") == "tapping-with-chip-breaking"));
     if (!tapping || (tapping && !(properties.useRigidTapping == "without"))) {
       writeBlock(
         sOutput.format(spindleSpeed), mFormat.format(tool.clockwise ? 3 : 4)
@@ -631,7 +632,7 @@ function onSection() {
 
     gMotionModal.reset();
     writeBlock(gPlaneModal.format(17));
-
+    
     if (!machineConfiguration.isHeadConfiguration()) {
       writeBlock(
         gAbsIncModal.format(90),
@@ -727,10 +728,10 @@ function onCyclePoint(_x, _y, _z) {
     return;
   }
   var planeCode = gPlaneModal.format(plane);
-
+  
   if (isFirstCyclePoint()) {
     repositionToCycleClearance(cycle, _x, _y, _z);
-
+    
     // return to initial Z which is clearance plane and set absolute mode
 
     var F = cycle.feedrate;
@@ -974,7 +975,7 @@ function getOptimizedHeads(_x, _y, _z, _a, _b, _c) {
     x = _x + displacement.x;
     y = _y + displacement.y;
     z = _z + displacement.z;
-
+    
     // adjust point for C-axis offset
     displacement = new Vector(-Math.cos(_c), Math.sin(_c), 0);
     displacement.multiply(cAxisOffset); // control will compensate for tool length
@@ -1032,9 +1033,9 @@ function onLinear5D(_x, _y, _z, _a, _b, _c, feed) {
   var a = aOutput.format(_a);
   var b = bOutput.format(_b);
   var c = cOutput.format(_c);
-
+  
   // get feedrate number
-  var f = {frn: 0, fmode: 0};
+  var f = {frn:0, fmode:0};
   if (a || b || c) {
     f = getMultiaxisFeed(_x, _y, _z, _a, _b, _c, feed);
     if (useInverseTimeFeed) {
@@ -1070,8 +1071,8 @@ var inverseTimeUnits = 1.0; // 1.0 = minutes, 60.0 = seconds
 var maxInverseTime = 45000; // maximum value to output for Inverse Time feeds
 var maxDPM = 9999.99; // maximum value to output for DPM feeds
 var useInverseTimeFeed = true; // use 1/T feeds
-var inverseTimeFormat = createFormat({decimals: 2, forceDecimal: true});
-var inverseTimeOutput = createVariable({prefix: "F", force: true}, inverseTimeFormat);
+var inverseTimeFormat = createFormat({decimals:2, forceDecimal:true});
+var inverseTimeOutput = createVariable({prefix:"F", force:true}, inverseTimeFormat);
 var previousDPMFeed = 0; // previously output DPM feed
 var dpmFeedToler = 0.5; // tolerance to determine when the DPM feed has changed
 var previousABC = new Vector(0, 0, 0); // previous ABC position if maintained in post, don't define if not used
@@ -1079,14 +1080,14 @@ var forceOptimized = undefined; // used to override optimized-for-angles points 
 
 /** Calculate the multi-axis feedrate number. */
 function getMultiaxisFeed(_x, _y, _z, _a, _b, _c, feed) {
-  var f = {frn: 0, fmode: 0};
+  var f = {frn:0, fmode:0};
   if (feed <= 0) {
     error(localize("Feedrate is less than or equal to 0."));
     return f;
   }
-
+  
   var length = getMoveLength(_x, _y, _z, _a, _b, _c);
-
+  
   if (useInverseTimeFeed) { // inverse time
     f.frn = getInverseTime(length.tool, feed);
     f.fmode = 93;
@@ -1106,7 +1107,7 @@ function getOptimizedMode() {
   // return (currentSection.getOptimizedTCPMode() != 0); // TAG:doesn't return correct value
   return false; // always return false for non-TCP based heads
 }
-
+  
 /** Calculate the DPM feedrate number. */
 function getFeedDPM(_moveLength, _feed) {
   if ((_feed == 0) || (_moveLength.tool < 0.0001) || (toDeg(_moveLength.abcLength) < 0.0005)) {
@@ -1217,7 +1218,7 @@ function getRotaryRadius(axis, toolPosition, abc) {
   }
   return radius;
 }
-
+  
 /** Calculate the linear distance based on the rotation of a rotary axis. */
 function getRadialDistance(radius, startABC, endABC) {
   // calculate length of radial move
@@ -1228,7 +1229,7 @@ function getRadialDistance(radius, startABC, endABC) {
   var radialLength = (2 * Math.PI * radius) * (delta / (2 * Math.PI));
   return radialLength;
 }
-
+  
 /** Calculate tooltip, XYZ, and rotary move lengths. */
 function getMoveLength(_x, _y, _z, _a, _b, _c) {
   // get starting and ending positions
@@ -1244,7 +1245,7 @@ function getMoveLength(_x, _y, _z, _a, _b, _c) {
     startABC = getCurrentDirection();
   }
   var endABC = new Vector(_a, _b, _c);
-
+    
   if (!getOptimizedMode()) { // calculate XYZ from tool tip
     startTool = getCurrentPosition();
     endTool = new Vector(_x, _y, _z);
@@ -1291,14 +1292,14 @@ function getMoveLength(_x, _y, _z, _a, _b, _c) {
 
   // calculate radii
   moveLength.radius = getRotaryRadii(startTool, endTool, startABC, endABC);
-
+  
   // calculate the radial portion of the tool tip movement
   var radialLength = Math.sqrt(
     Math.pow(getRadialDistance(moveLength.radius.x, startABC.x, endABC.x), 2.0) +
     Math.pow(getRadialDistance(moveLength.radius.y, startABC.y, endABC.y), 2.0) +
     Math.pow(getRadialDistance(moveLength.radius.z, startABC.z, endABC.z), 2.0)
   );
-
+  
   // calculate the tool tip move length
   // tool tip distance is the move distance based on a combination of linear and rotary axes movement
   moveLength.tool = moveLength.xyzLength + radialLength;
@@ -1307,7 +1308,7 @@ function getMoveLength(_x, _y, _z, _a, _b, _c) {
   if (false) {
     writeComment("DEBUG - tool   = " + moveLength.tool);
     writeComment("DEBUG - xyz    = " + moveLength.xyz);
-    var temp = Vector.product(moveLength.abc, 180 / Math.PI);
+    var temp = Vector.product(moveLength.abc, 180/Math.PI);
     writeComment("DEBUG - abc    = " + temp);
     writeComment("DEBUG - radius = " + moveLength.radius);
   }
@@ -1392,7 +1393,7 @@ function intersectPlane(point, direction, plane) {
   }
   var distance = (Vector.dot(normal, point) - plane.distance) / cosa;
   var intersection = Vector.diff(point, Vector.product(direction, distance));
-
+  
   if (!isSameDirection(Vector.diff(intersection, point).getNormalized(), direction)) {
     return undefined;
   }
@@ -1403,12 +1404,12 @@ function intersectPlane(point, direction, plane) {
 function intersectStock(point, direction) {
   var stock = getWorkpiece();
   var sides = new Array(
-    {x: 1, y: 0, z: 0, distance: stock.lower.x, side: "-X"},
-    {x: 0, y: 1, z: 0, distance: stock.lower.y, side: "-Y"},
-    {x: 0, y: 0, z: 1, distance: stock.lower.z, side: "-Z"},
-    {x: 1, y: 0, z: 0, distance: stock.upper.x, side: "X"},
-    {x: 0, y: 1, z: 0, distance: stock.upper.y, side: "Y"},
-    {x: 0, y: 0, z: 1, distance: stock.upper.z, side: "Z"}
+    {x:1, y:0, z:0, distance:stock.lower.x, side:"-X"},
+    {x:0, y:1, z:0, distance:stock.lower.y, side:"-Y"},
+    {x:0, y:0, z:1, distance:stock.lower.z, side:"-Z"},
+    {x:1, y:0, z:0, distance:stock.upper.x, side:"X"},
+    {x:0, y:1, z:0, distance:stock.upper.y, side:"Y"},
+    {x:0, y:0, z:1, distance:stock.upper.z, side:"Z"}
   );
   var intersection = undefined;
   var currentDistance = 999999.0;
@@ -1448,15 +1449,15 @@ function getRetractPosition(currentPosition, currentDirection) {
 function isRewindAngleValid(_a, _b, _c) {
   // make sure the angles are different from the last output angles
   if (!abcFormat.areDifferent(getCurrentDirection().x, _a) &&
-    !abcFormat.areDifferent(getCurrentDirection().y, _b) &&
-    !abcFormat.areDifferent(getCurrentDirection().z, _c)) {
+      !abcFormat.areDifferent(getCurrentDirection().y, _b) &&
+      !abcFormat.areDifferent(getCurrentDirection().z, _c)) {
     error(
       localize("REWIND: Rewind angles are the same as the previous angles: ") +
       abcFormat.format(_a) + ", " + abcFormat.format(_b) + ", " + abcFormat.format(_c)
     );
     return false;
   }
-
+  
   // make sure angles are within the limits of the machine
   var abc = new Array(_a, _b, _c);
   var ix = machineConfiguration.getAxisU().getCoordinate();
@@ -1479,22 +1480,22 @@ function isRewindAngleValid(_a, _b, _c) {
     );
     return false;
   }
-
+  
   return true;
 }
 
 function onRewindMachine(_a, _b, _c) {
-
+  
   if (!performRewinds) {
     error(localize("REWIND: Rewind of machine is required for simultaneous multi-axis toolpath and has been disabled."));
     return;
   }
-
+  
   // Allow user to override rewind logic
   if (onRewindMachineEntry(_a, _b, _c)) {
     return;
   }
-
+  
   // Determine if input angles are valid or will cause a crash
   if (!isRewindAngleValid(_a, _b, _c)) {
     error(
@@ -1503,7 +1504,7 @@ function onRewindMachine(_a, _b, _c) {
     );
     return;
   }
-
+  
   // Work with the tool end point
   if (currentSection.getOptimizedTCPMode() == 0) {
     currentTool = getCurrentPosition();
@@ -1512,7 +1513,7 @@ function onRewindMachine(_a, _b, _c) {
   }
   var currentABC = getCurrentDirection();
   var currentDirection = machineConfiguration.getDirection(currentABC);
-
+  
   // Calculate the retract position
   var retractPosition = getRetractPosition(currentTool, currentDirection);
 
@@ -1534,7 +1535,7 @@ function onRewindMachine(_a, _b, _c) {
     position = machineConfiguration.getOrientation(getCurrentDirection()).getTransposed().multiply(retractPosition);
   }
   onExpandedLinear(position.x, position.y, position.z, safeRetractFeed);
-
+  
   //Position to safe machine position for rewinding axes
   moveToSafeRetractPosition(false);
 
@@ -1713,14 +1714,14 @@ function getCoolantCodes(coolant) {
 }
 
 var mapCommand = {
-  COMMAND_STOP: 0,
-  COMMAND_OPTIONAL_STOP: 1,
-  COMMAND_END: 2,
-  COMMAND_SPINDLE_CLOCKWISE: 3,
-  COMMAND_SPINDLE_COUNTERCLOCKWISE: 4,
-  COMMAND_STOP_SPINDLE: 5,
-  COMMAND_ORIENTATE_SPINDLE: 19,
-  COMMAND_LOAD_TOOL: 6
+  COMMAND_STOP:0,
+  COMMAND_OPTIONAL_STOP:1,
+  COMMAND_END:2,
+  COMMAND_SPINDLE_CLOCKWISE:3,
+  COMMAND_SPINDLE_COUNTERCLOCKWISE:4,
+  COMMAND_STOP_SPINDLE:5,
+  COMMAND_ORIENTATE_SPINDLE:19,
+  COMMAND_LOAD_TOOL:6
 };
 
 function onCommand(command) {
@@ -1737,7 +1738,7 @@ function onCommand(command) {
   case COMMAND_TOOL_MEASURE:
     return;
   }
-
+  
   var stringId = getCommandStringId(command);
   var mcode = mapCommand[stringId];
   if (mcode != undefined) {
@@ -1753,13 +1754,13 @@ function onSectionEnd() {
   if (currentSection.isMultiAxis()) {
     writeBlock(gFeedModeModal.format(94)); // inverse time feed off
   }
-
+  
   if (!isLastSection() && (getNextSection().getTool().coolant != tool.coolant)) {
     setCoolant(COOLANT_OFF);
   }
-
+  
   if (((getCurrentSectionId() + 1) >= getNumberOfSections()) ||
-    (tool.number != getNextSection().getTool().number)) {
+      (tool.number != getNextSection().getTool().number)) {
     onCommand(COMMAND_BREAK_CONTROL);
   }
 

@@ -3,12 +3,14 @@
         "browser": true,
         "es6": true
     },
+    "extends": "eslint:recommended",
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true
         }
     },
     "rules": {
+        "no-tabs": "error",
         "no-mixed-spaces-and-tabs": "error",
         "no-undef": "off",
         "no-unused-vars": "off",
@@ -42,7 +44,8 @@
         "callback-return": "error",
         "camelcase": "error",
         "comma-spacing": [
-            "error"
+            "error",
+            { "before": false, "after": true }
         ],
         "comma-style": [
             "error",
@@ -78,12 +81,14 @@
         "id-match": "error",
         // "indent": "off",
 
+        // "indent": ["error", 2,
+        //   { "ignoreComments": true }
+        // ],
         "indent": ["error", 2],
-
         "init-declarations": "off",
         "jsx-quotes": "error",
         "key-spacing": "off",
-        "keyword-spacing": "off",
+        "keyword-spacing": "error",
         "linebreak-style": [
             "error",
             "windows"
@@ -250,7 +255,7 @@
             "error",
             "never"
         ],
-        "space-infix-ops": "off",
+        "space-infix-ops": "error",
         "space-unary-ops": "error",
         "spaced-comment": "off",
         "strict": [

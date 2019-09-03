@@ -4,7 +4,6 @@
   },
   "editor.minimap.enabled": false,
   "git.enabled": false,
-  "editor.fontSize": 12,
   "editor.tabSize": 2,
   "eslint.alwaysShowStatus": true,
   "eslint.autoFixOnSave": true,
