@@ -1,0 +1,69 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "presentation": {
+    "focus": false,
+    "clear": true
+  },
+  "problemMatcher": [],
+  "tasks": [
+    {
+      "label": "QA Test: Run Single",
+      "type": "shell",
+      "command": "${workspaceFolder}/tests/run-single.bat",
+      "args": [
+        {
+          "value": "${file}",
+          "quoting": "strong"
+        },
+        "nopause"
+      ]
+    },
+    {
+      "label": "QA Test: Copy to expected single",
+      "type": "shell",
+      "command": "${workspaceFolder}/tests/copy-to-expected-single.bat",
+      "args": [
+        {
+          "value": "${file}",
+          "quoting": "strong"
+        },
+        "nopause"
+      ],
+      "presentation": {
+        "focus": true
+      }
+    },
+    {
+      "label": "QA Test: Recreate expected single",
+      "type": "shell",
+      "command": "${workspaceFolder}/tests/recreate-expected-single.bat",
+      "args": [
+        {
+          "value": "${file}",
+          "quoting": "strong"
+        },
+        "nopause"
+      ]
+    },
+    {
+      "label": "QA Test: Run all",
+      "type": "shell",
+      "command": "${workspaceFolder}/tests/run-all.bat"
+    },
+    {
+      "label": "QA Test: Copy to expected all",
+      "type": "shell",
+      "command": "${workspaceFolder}/tests/copy-to-expected-all.bat",
+      "presentation": {
+        "focus": true
+      }
+    },
+    {
+      "label": "QA Test: Recreate expected all",
+      "type": "shell",
+      "command": "${workspaceFolder}/tests/recreate-expected-all.bat"
+    }
+  ]
+}
