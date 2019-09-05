@@ -1,5 +1,5 @@
 /**
-  Copyright (C) 2012-2019 by Autodesk, Inc.
+  Copyright (C) 2012-2020 by Autodesk, Inc.
   All rights reserved.
 
   5AXISMAKER post processor configuration.
@@ -32,8 +32,6 @@ minimumCircularSweep = toRad(0.01);
 maximumCircularSweep = toRad(180);
 allowHelicalMoves = true;
 allowedCircularPlanes = undefined; // allow any circular motion
-
-
 
 // user-defined properties
 properties = {
