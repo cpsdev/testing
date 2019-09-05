@@ -1,5 +1,5 @@
 /**
-  Copyright (C) 2012-2018 by Autodesk, Inc.
+  Copyright (C) 2012-2020 by Autodesk, Inc.
   All rights reserved.
 
   5AXISMAKER post processor configuration.
@@ -32,8 +32,6 @@ minimumCircularSweep = toRad(0.01);
 maximumCircularSweep = toRad(180);
 allowHelicalMoves = true;
 allowedCircularPlanes = undefined; // allow any circular motion
-
-
 
 // user-defined properties
 properties = {
@@ -1308,7 +1306,7 @@ function getMoveLength(_x, _y, _z, _a, _b, _c) {
   if (false) {
     writeComment("DEBUG - tool   = " + moveLength.tool);
     writeComment("DEBUG - xyz    = " + moveLength.xyz);
-    var temp = Vector.product(moveLength.abc, 180/Math.PI);
+    var temp = Vector.product(moveLength.abc, 180 / Math.PI);
     writeComment("DEBUG - abc    = " + temp);
     writeComment("DEBUG - radius = " + moveLength.radius);
   }
