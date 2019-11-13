@@ -21,7 +21,7 @@ legal = "Copyright (C) 2012-2018 by Autodesk, Inc.";
 certificationLevel = 2;
 minimumRevision = 40783;
 
-longDescription = "Generic 5-axis post for 5AXISMAKER with Mach3 control 1111111111.";
+longDescription = "Generic 5-axis post for 5AXISMAKER with Mach3 control changeA.";
 
 extension = "tap";
 setCodePage("ascii");
