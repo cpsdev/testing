@@ -14,7 +14,7 @@
   FORKID {61167F95-13C8-423D-B5C7-A64F747AAA5E}
 */
 
-description = "5AXISMAKER";
+description = "5AXISMAKER changeB";
 vendor = "5AXISWORKS";
 vendorUrl = "http://www.5axismaker.com";
 legal = "Copyright (C) 2012-2018 by Autodesk, Inc.";
